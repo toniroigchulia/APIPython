@@ -3,3 +3,4 @@ fastapi
 requests
 asyncio
 httpx
+jinja2
