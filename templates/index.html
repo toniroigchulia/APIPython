@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Hypixel Skyblock</title>
+    <style>
+        body {
+            text-align: center;
+            background-image: url('/static/images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color:white;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        body::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          background-color: rgba(66, 66, 66, 0.65);
+          z-index: -1;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        #content-container {
+            text-align: center;
+            padding: 150px;
+            border-radius: 10px;
+            text-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body style="text-align: center;">
+    
+    <div id="content-container">
+        <h1>API Hypixel Skyblock</h1>
+        
+        <br>Esta es la API que contiene toda la informacion del modo del Skyblock del servidor de minecraft Hypixel<br>
+        <br>He elejido esta API porque es un juego que juego a menudo y me puede aportar informacion util sobre este<br>
+        <br>Hago dos peticiones principales la Auction House y el Bazaar que son donde esta concentrado el mayor movimiento de la economia de este modo de juego<br>
+        <br>Al tener acceso facil y rapido a esta informacion me permite comprar objetos al mejor precio y tambien poder llevar a cabo flips de forma mas eficiente<br>
+        <br><br>
+        <br><br>
+        
+        <!-- Establecer URLs predeterminadas en los atributos onclick -->
+        <button onclick="redirigir('/auctions')">Ir a Auctions</button>
+        <button onclick="redirigir('/bazaar')">Ir al Bazaar</button>
+    </div>
+
+    <script>
+        function redirigir(url) {
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>

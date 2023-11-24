@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bazaar Data</title>
+    <style>
+        body {
+            text-align: center;
+            color: white;
+            background-image: url('/static/images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-attachment: fixed;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        th, td {
+            border: 1px solid #4CAF50;
+            text-align: left;
+            padding: 8px;
+        }
+        
+        td {
+            background-color: rgba(66, 66, 66, 0.75);
+            text-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        th {
+            color: #4CAF50;
+            background-color: #f2f2f2;
+        }
+
+        .pagination {
+            display: flex;
+            list-style: none;
+            margin: 10px 0;
+            margin-bottom: 0;
+            overflow-x: auto;
+        }
+
+        .pagination a {
+            color: rgb(255, 255, 255);
+            background-color: rgba(66, 66, 66, 0.75);
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .pagination a.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #cecece7e;
+        }
+
+        #filterInput {
+            margin-top: 10px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+    function printBazaarData(bazaarData, itemsPerPage, currentPage, filterText) {
+        const filteredData = bazaarData.filter(item =>
+            item.name.toLowerCase().includes(filterText.toLowerCase())
+        );
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+
+        const table = document.createElement("table");
+        const headerRow = table.insertRow(0);
+        const headers = ["Item Name", "Min Price", "Max Price", "Avg Price", "Quantity"];
+
+        headers.forEach(headerText => {
+            const th = document.createElement("th");
+            th.appendChild(document.createTextNode(headerText));
+            headerRow.appendChild(th);
+        });
+
+        for (let i = startIndex; i < Math.min(endIndex, filteredData.length); i++) {
+            const row = table.insertRow(-1);
+            const rowData = [filteredData[i].name, filteredData[i].min_price, filteredData[i].max_price, filteredData[i].avg_price, filteredData[i].quantity];
+
+            rowData.forEach(text => {
+                const cell = row.insertCell(-1);
+                cell.appendChild(document.createTextNode(text));
+            });
+        }
+
+        document.body.appendChild(table);
+    }
+
+    function updatePagination(bazaarData, itemsPerPage, currentPage, filterText) {
+        const filteredData = bazaarData.filter(item =>
+            item.name.toLowerCase().includes(filterText.toLowerCase())
+        );
+
+        const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+        const paginationDiv = document.createElement("div");
+        paginationDiv.className = "pagination";
+
+        for (let i = 1; i <= totalPages; i++) {
+            const link = document.createElement("a");
+            link.href = "#";
+            link.textContent = i;
+
+            if (i === currentPage) {
+                link.classList.add("active");
+            }
+
+            link.addEventListener("click", function() {
+                const newTable = document.querySelector("table");
+                const pagination = document.querySelector(".pagination");
+                newTable.parentNode.removeChild(newTable);
+                pagination.parentNode.removeChild(pagination);
+                printBazaarData(bazaarData, itemsPerPage, i, filterText);
+                updatePagination(bazaarData, itemsPerPage, i, filterText);
+            });
+
+            paginationDiv.appendChild(link);
+        }
+
+        document.body.appendChild(paginationDiv);
+    }
+
+    function applyFilter(bazaarData, itemsPerPage, currentPage) {
+        const filterInput = document.getElementById("filterInput");
+        const filterText = filterInput.value.trim();
+
+        const table = document.querySelector("table");
+        const pagination = document.querySelector(".pagination");
+        table.parentNode.removeChild(table);
+        pagination.parentNode.removeChild(pagination);
+
+        printBazaarData(bazaarData, itemsPerPage, currentPage, filterText);
+        updatePagination(bazaarData, itemsPerPage, currentPage, filterText);
+    }
+
+    const bazaarData = JSON.parse('{{ bazaar_data | tojson | safe }}');
+    const itemsPerPage = 30;
+    const currentPage = 1;
+
+    // Título
+    const title = document.createElement("h1");
+    title.appendChild(document.createTextNode("Bazaar Information"));
+    document.body.appendChild(title);
+
+    // Campo de filtro
+    const filterInput = document.createElement("input");
+    filterInput.type = "text";
+    filterInput.id = "filterInput";
+    filterInput.placeholder = "Filter by Item Name";
+    filterInput.addEventListener("input", function() {
+        applyFilter(bazaarData, itemsPerPage, currentPage);
+    });
+
+    document.body.appendChild(filterInput);
+
+    printBazaarData(bazaarData, itemsPerPage, currentPage, "");
+    updatePagination(bazaarData, itemsPerPage, currentPage, "");
+</script>
+
+</body>
+</html>
